@@ -17,16 +17,20 @@ class LabeledDataSet(object):
         self.labeled_data_ph = env.LABELED_DATA_PATH
         self.db = bdb_open(env.DB_PATH)
         self.num_lines = get_num_lines(env.LABELED_DATA_PATH)
+        self.labels = []
 
     def load_labeled_data(self):
         """
         load labeled data to a list
         """
         self.labeled_records = []
+        self.labels = []
         with open(self.labeled_data_ph) as f:
             for line in f.readlines():
+                line = line.strip()
                 label, source, url, target  = line.split()
                 target = target.strip()
+                self.labels.append(int(label))
                 self.labeled_records.append(
                     [label, source, url, target] ) 
 
@@ -38,6 +42,11 @@ class LabeledDataSet(object):
                 target = target.strip()
                 yield ( {'label':label, 
                             'source':source, 'url':url, 'target':target})
+
+    def get_labels(self):
+        if not self.labels:
+            self.load_labeled_data()
+        return self.labels
 
 
     def todb(self):
