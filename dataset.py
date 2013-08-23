@@ -8,7 +8,7 @@ Created on Aug 9, 2013
 '''
 from __future__ import division
 import env
-from utils import bdb_open, tojson, \
+from utils import  tojson, \
         fromjson, strip, Dic, args_check,\
         get_num_lines
 

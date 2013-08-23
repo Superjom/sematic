@@ -48,7 +48,7 @@ def minEditDistR(target, source):
             minEditDistR(target[:i-1], source[:j-1]) + substCost(source[j-1], target[i-1]))
 
 
-import bsddb
+#import bsddb
 def bdb_open(path):
     db = bsddb.btopen(path, 'c')
     return db
@@ -72,7 +72,7 @@ class Dic(object):
         self.dic = list(set(_list))
 
     def get(self, word):
-        return self.dic.index(word)
+        return self.dic[word]
 
     def tofile(self, path, encode=None):
         """
@@ -85,9 +85,12 @@ class Dic(object):
             f.write(c)
 
     def fromfile(self, path):
+        self.dic = {}
         with open(path) as f:
             c = f.read()
-            self.dic = c.split()
+            _list = c.split()
+            for i, w in enumerate(_list):
+                self.dic[w] = i
 
 strip = lambda x: x.strip()
 

@@ -7,6 +7,8 @@ Created on Jul 22, 2013
 '''
 from numpy import *
 
+def replace_word_with_wid(dicpath, fpath, tpath):
+
 class LinearData(object):
     """
     trans linear data format:
