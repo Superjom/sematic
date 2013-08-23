@@ -27,10 +27,9 @@ def gen_2gram_dic(fpath, tpath):
         ws = map(strip, ws)
         two_grams = []
         for i in range(len(ws)-1):
-            if i % 500 == 0:
-                print 'status:', i / len(ws)
-            word_pair = "%s-%s" % (ws[i], ws[i+1])
-            two_grams.append(word_pair)
+            wp = "%s-%s" % (ws[i], ws[i+1])
+            #print wp
+            two_grams.append(wp)
 
         dic = Dic()
         dic.from_list(two_grams)

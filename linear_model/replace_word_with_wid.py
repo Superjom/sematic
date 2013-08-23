@@ -30,8 +30,8 @@ class Replacer(object):
         with open(self.fpath) as f:
             for line in f.readlines():
                 s, t = map(strip, line.split('\t'))
-                ss = [self.dic.get(w) for w in s.split()]
-                ts = [self.dic.get(w) for w in t.split()]
+                ss = [self.dic.dic.get(w, '') for w in s.split()]
+                ts = [self.dic.dic.get(w, '') for w in t.split()]
                 c = ' '.join(map(str, ss)) \
                     + '\t' +\
                     ' '.join(map(str, ts))
