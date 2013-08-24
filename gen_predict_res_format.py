@@ -15,6 +15,10 @@ class Gen(object):
     }
 
     def __init__(self, fph, test_ph, tph):
+        """
+        fph : file created by liblinear
+        test_ph: testData
+        """
         self.fph, self.test_ph, self.tph = \
                 fph, test_ph, tph
 
