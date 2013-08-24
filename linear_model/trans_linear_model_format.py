@@ -54,7 +54,7 @@ class LinearFormater(object):
             label = "+1" if li[0]==1 else "-1"
             line = [label]
             for i,data in enumerate(li[1:]):
-                _max = -1 if i==0 else self.maxs[-1]
+                _max = 0 if i==0 else self.maxs[-1]
                 keyvalues = data.items()
                 keyvalues = sorted(keyvalues, key=lambda x:x[0])
                 for key,value in keyvalues:

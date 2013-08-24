@@ -19,12 +19,18 @@ TRAIN_DATA_DIC=${TRAIN_DATA_PH}_titles_seg_dic
 TRAIN_DATA_DIC2=${TRAIN_DATA_PH}_titles_seg_2_dic 
 TEST_DATA_DIC=${TEST_DATA_PH}_titles_seg_dic 
 TEST_DATA_DIC2=${TEST_DATA_PH}_titles_seg_2_dic 
+TEST_DATA_TITLES_2GRAM=${TEST_DATA_PH}_titles_2gram
 TOTAL_DIC_PATH=$DATA_PATH/total_dic.txt
 TOTAL_DIC_PATH2=$DATA_PATH/total_dic_2.txt
 
-PYPY=$PROJECT_PATH/tools/pypy-2.1/bin/pypy
+TOTAL_TOKEN_DIC=$DATA_PATH/total_token.dic
+TOTAL_TOKEN_2_DIC=$DATA_PATH/total_token_2gram.dic
+
 
 
 # tools 
+PYPY=$PROJECT_PATH/tools/pypy-2.1/bin/pypy
 liblinear_train=${PROJECT_PATH}/tools/liblinear-1.93/train
 liblinear_predict=${PROJECT_PATH}/tools/liblinear-1.93/predict
+
+

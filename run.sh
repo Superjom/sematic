@@ -39,8 +39,8 @@ gen_dic() {
         tag_seg_dic_path=${tag_seg_path}_dic
         #tag_seg_dic_2_path=${tag_seg_path}_dic
         ./tools/pypy gen_dic.py 1 $seg_path $seg_dic_path
-        ./tools/pypy gen_dic.py 2 $seg_path $seg_dic_2_path
         ./tools/pypy gen_dic.py 1 $tag_seg_path $tag_seg_dic_path
+        ./tools/pypy gen_dic.py 2 $seg_path $seg_dic_2_path
     done
     # gen total dic
     cat $LABEL_DATA_DIC $TRAIN_DATA_DIC $TEST_DATA_DIC > $TOTAL_DIC_PATH
@@ -50,8 +50,23 @@ gen_dic() {
     ./tools/pypy gen_dic.py 1 $TOTAL_DIC_PATH2 $TOTAL_DIC_PATH2
 }
 
+# extract tokens from titles
+token2titles_seg() {
+    # extract tags to titles
+    for path in $LABELED_DATA_PH $TEST_DATA_PH; do
+        $PYPY titles_seg_token2titles.py ${path}_titles_seg_tag ${path}_titles_seg_tokens
+    done
+    # generate total tag dic 
+    # here only for labeled and test data
+    cat ${LABELED_DATA_PH}_titles_seg_tokens ${TEST_DATA_PH}_titles_seg_tokens > $TOTAL_TOKEN_DIC
+    $PYPY gen_dic.py 1 $TOTAL_TOKEN_DIC $TOTAL_TOKEN_DIC
+    cat ${LABELED_DATA_PH}_titles_seg_tokens ${TEST_DATA_PH}_titles_seg_tokens > $TOTAL_TOKEN_2_DIC
+    $PYPY gen_dic.py 2 $TOTAL_TOKEN_2_DIC $TOTAL_TOKEN_2_DIC
+}
+
 # replace title's words with their word indexs
 
 #init_data
 #split_word
-gen_dic
+#gen_dic
+token2titles_seg

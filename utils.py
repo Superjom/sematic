@@ -15,8 +15,11 @@ pjoin = os.path.join
 
 def get_num_lines(path):
     shell = os.popen('wc -l %s' % path).read()
-
-    return int(shell.split()[0]) + 1
+    try:
+        num = int(shell)
+        return num
+    except:
+        return int(shell.split()[0])+1
 
 
 class Memoize:

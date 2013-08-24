@@ -35,6 +35,9 @@ class Gen(object):
                     res = resf.readline()
                     tes = testf.readline()
                     label = self.formats.get(res.strip())
+                    if label is None:
+                        break
+                    print 'label:', label
                     line = "%d\t%s" % (label, tes.strip())
                     self.lines.append(line)
 
