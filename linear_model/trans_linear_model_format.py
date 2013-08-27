@@ -12,6 +12,11 @@ COMPILER = "pypy"
 
 from utils import strip, args_check, get_num_lines
 
+def get_num_words(path):
+    with open(path) as f:
+        c = f.read()
+        ws = c.split()
+        return len(ws)
 
 class LinearFormater(object):
     def __init__(self):
@@ -23,7 +28,7 @@ class LinearFormater(object):
             lst = [label]
             self.lst.append(lst)
 
-    def add_lst(self, lst, need_count=True):
+    def add_lst(self, lst, _max=None, need_count=True):
         """
         list of list
         [
@@ -33,28 +38,40 @@ class LinearFormater(object):
         parameters:
             count=True/False, count times it occurs
         """
-        _max = -1
+        #_max = -1
+        __max = 0
         for id, line in enumerate(lst):
             #print line
             #print id
             if not line: 
                 continue
-            _max = max(_max, max(line))
+            __max = max(__max, max(line))
             if need_count:
                 count = self.get_list_with_count(line)
             else:
                 count = self.get_list(line)
             #datas[id] = count
             self.lst[id].append(count)
+        if _max is None:
+            _max = __max
+        if __max > _max:
+            raise Exception, "_max of dic is wrong! dic:%d cur:%d" % (_max, __max)
         self.maxs.append(_max)
+
+    def add_vector(self, vec):
+        self.maxs.append(1)
+        for id, item in enumerate(vec):
+            count = {1:item}
+            self.lst[id].append(count)
 
     def tofile(self, path):
         lines = []
+        print 'maxs:', self.maxs
         for id, li in enumerate(self.lst):
             label = "+1" if li[0]==1 else "-1"
             line = [label]
             for i,data in enumerate(li[1:]):
-                _max = 0 if i==0 else self.maxs[-1]
+                _max = 0 if i==0 else sum(self.maxs[:i])
                 keyvalues = data.items()
                 keyvalues = sorted(keyvalues, key=lambda x:x[0])
                 for key,value in keyvalues:
@@ -64,7 +81,7 @@ class LinearFormater(object):
             line = ' '.join(line)
             lines.append(line)
 
-        with open(self.tpath, 'w') as f:
+        with open(path, 'w') as f:
             f.write("\n".join(lines))
 
     """

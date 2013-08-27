@@ -32,12 +32,13 @@ class Gen(object):
         with open(self.fph) as resf:
             with open(self.test_ph) as testf:
                 for i in range(num_lines):
+                    #print i
                     res = resf.readline()
                     tes = testf.readline()
                     label = self.formats.get(res.strip())
                     if label is None:
                         break
-                    print 'label:', label
+                    #print 'label:', label
                     line = "%d\t%s" % (label, tes.strip())
                     self.lines.append(line)
 

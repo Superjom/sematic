@@ -28,6 +28,13 @@ class Memoize:
         self.memo = {}
 
     def __call__(self, *args):
+        """
+        if len(self.memo) > 50000:
+            raise Exception, "out of range"
+        """
+        num_of_iter = args[0]
+        if num_of_iter == 0:
+            self.memo = {}
         key = str(args)
         if not key in self.memo:
             self.memo[key] = self.f(*args)
@@ -50,6 +57,20 @@ def minEditDistR(target, source):
             minEditDistR(target, source[:j-1])+1,
             minEditDistR(target[:i-1], source[:j-1]) + substCost(source[j-1], target[i-1]))
 
+
+@memoized
+def minEditDistRe(num_iter, target, source):
+    if num_iter > 5000:
+        raise Exception, "out of iter_num"
+    i = len(target)
+    j = len(source)
+    if i == 0: return j
+    elif j==0: return i
+
+    return min(
+            minEditDistRe(num_iter+1, target[:i-1], source) + 1,
+            minEditDistRe(num_iter+1, target, source[:j-1])+1,
+            minEditDistRe(num_iter+1, target[:i-1], source[:j-1]) + substCost(source[j-1], target[i-1]))
 
 #import bsddb
 def bdb_open(path):

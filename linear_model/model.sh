@@ -39,7 +39,8 @@ linear_model_predict() {
     # to upload format
     echo gen predict upload
     cd ..
-    $PYPY gen_predict_res_format.py  $TEST_DATA_PH $predict_ph $upload_ph
+    cmd="$PYPY gen_predict_res_format.py $predict_ph $TEST_DATA_PH $upload_ph"
+    echo $cmd; $cmd
     cd linear_model 
     # zip it
     echo zip the result
@@ -93,11 +94,85 @@ two_gram_token_main() {
 # word: 1-gram 2-gram 
 # token: 1-gram 2-gram
 # edit distance: word, token
-word_and_token_and_edit_dis() {
+word_and_token_1gram_2gram_and_editdis_word_char() {
+    path=$2
+    type=$1
+    total_wid_dic_ph=$TOTAL_DIC_PATH
+    total_wid_2gram_dic_ph=$TOTAL_DIC_PATH2
+    total_token_dic_ph=$TOTAL_TOKEN_DIC
+    total_token_2gram_dic_ph=$TOTAL_TOKEN_2_DIC
+
+    if [ $type = "train" ]; then
+        # train
+        $PYPY combine_word_and_token_and_editdis2linear_format.py \
+            train \
+          ${path}.combine.wid1.2.token1.2.edit.w.c.linear\
+            $LABELED_DATA_LABEL_PH\
+            $total_wid_dic_ph\
+            ${path}_titles_seg_wid \
+            $total_wid_2gram_dic_ph\
+            ${path}_titles_2gram_wid \
+            $total_token_dic_ph\
+            ${path}_titles_seg_tokens_wid\
+            $total_token_2gram_dic_ph\
+            ${path}_titles_seg_tokens_2gram_wid\
+            ${path}.word.distance
+    else
+        # train
+        $PYPY combine_word_and_token_and_editdis2linear_format.py \
+            test \
+          ${path}.combine.wid1.2.token1.2.edit.w.c.linear\
+            $total_wid_dic_ph\
+            ${path}_titles_seg_wid \
+            $total_wid_2gram_dic_ph\
+            ${path}_titles_2gram_wid \
+            $total_token_dic_ph\
+            ${path}_titles_seg_tokens_wid\
+            $total_token_2gram_dic_ph\
+            ${path}_titles_seg_tokens_2gram_wid\
+            ${path}.word.distance
+    fi
+}
+linear_model_word_and_token_1gram_2gram_and_editdis_word_char() {
+    type=$1
+
+    test_linear_file=${TEST_DATA_PH}.combine.wid1.2.token1.2.edit.w.c.linear
+    train_linear_file=${LABELED_DATA_PH}.combine.wid1.2.token1.2.edit.w.c.linear
+    model_path=${train_linear_file}.model
+    predict_ph=${test_linear_file}_predict
+    upload_ph=${predict_ph}_upload
+
+    if [ $type = "init" -o $type = "all" ]; then
+        word_and_token_1gram_2gram_and_editdis_word_char train $LABELED_DATA_PH
+        word_and_token_1gram_2gram_and_editdis_word_char test $TEST_DATA_PH
+    fi
+
+    if [ $type = "train" -o $type = "all" ]; then
+        cmd="$liblinear_train -s 2 -c 4 -e 0.001 -v 5 $train_linear_file"
+        echo $cmd; $cmd
+        cmd="$liblinear_train -s 2 -c 4 -e 0.001 $train_linear_file $model_path"
+        echo $cmd; $cmd
+    fi
+
+    if [ $type = "predict" -o $type = "all" ]; then
+        cmd="$liblinear_predict $test_linear_file $model_path $predict_ph"
+        echo $cmd; $cmd
+
+        cd ..
+        cmd="$PYPY gen_predict_res_format.py $predict_ph $TEST_DATA_PH $upload_ph"
+        echo $cmd; $cmd
+        cd linear_model 
+
+        zip -r ${upload_ph}.zip $upload_ph
+    fi
+
 }
 
-
-#one_gram_main
-#two_gram_main
+#one_gram_word_main
+#two_gram_word_main
 #one_gram_token_main
-two_gram_token_main
+#two_gram_token_main
+#linear_model_word_and_token_1gram_2gram_and_editdis_word_char init
+#linear_model_word_and_token_1gram_2gram_and_editdis_word_char train
+
+linear_model_word_and_token_1gram_2gram_and_editdis_word_char predict

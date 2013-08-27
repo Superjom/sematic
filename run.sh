@@ -43,10 +43,12 @@ gen_dic() {
         ./tools/pypy gen_dic.py 2 $seg_path $seg_dic_2_path
     done
     # gen total dic
-    cat $LABEL_DATA_DIC $TRAIN_DATA_DIC $TEST_DATA_DIC > $TOTAL_DIC_PATH
+    #cat $LABEL_DATA_DIC $TRAIN_DATA_DIC $TEST_DATA_DIC > $TOTAL_DIC_PATH
+    cat $LABEL_DATA_DIC $TEST_DATA_DIC > $TOTAL_DIC_PATH
     ./tools/pypy gen_dic.py 1 $TOTAL_DIC_PATH $TOTAL_DIC_PATH
     # gen total 2gram dic
-    cat $LABEL_DATA_DIC2 $TRAIN_DATA_DIC2 $TEST_DATA_DIC2 > $TOTAL_DIC_PATH2
+    #cat $LABEL_DATA_DIC2 $TRAIN_DATA_DIC2 $TEST_DATA_DIC2 > $TOTAL_DIC_PATH2
+    cat $LABEL_DATA_DIC2 $TEST_DATA_DIC2 > $TOTAL_DIC_PATH2
     ./tools/pypy gen_dic.py 1 $TOTAL_DIC_PATH2 $TOTAL_DIC_PATH2
 }
 
@@ -64,9 +66,26 @@ token2titles_seg() {
     $PYPY gen_dic.py 2 $TOTAL_TOKEN_2_DIC $TOTAL_TOKEN_2_DIC
 }
 
+edit_distance() {
+    for path in $LABELED_DATA_PH $TEST_DATA_PH; do
+        # word-wise
+        wid_path=${path}_titles_seg_wid
+        source_path=${path}_titles
+        word_dis_path=${path}.word.distance
+        char_dis_path=${path}.char.distance
+
+        cmd="$PYPY edit_distance.py word $wid_path $word_dis_path"
+        echo $cmd; $cmd
+
+        cmd="$PYPY edit_distance.py char $source_path $char_dis_path"
+        echo $cmd; $cmd
+    done
+}
+
 # replace title's words with their word indexs
 
 #init_data
 #split_word
-#gen_dic
-token2titles_seg
+gen_dic
+#token2titles_seg
+#edit_distance
