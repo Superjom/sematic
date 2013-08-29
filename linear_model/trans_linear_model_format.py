@@ -64,7 +64,7 @@ class LinearFormater(object):
             count = {1:item}
             self.lst[id].append(count)
 
-    def tofile(self, path):
+    def tofile(self, path, is_float=False):
         lines = []
         print 'maxs:', self.maxs
         for id, li in enumerate(self.lst):
@@ -77,7 +77,7 @@ class LinearFormater(object):
                 for key,value in keyvalues:
                     key += _max+1
                     line.append(
-                        "%d:%d" % (key, value))
+                        ("%d:%f" if is_float else "%d:%d") % (key, value))
             line = ' '.join(line)
             lines.append(line)
 
@@ -113,6 +113,7 @@ class LinearFormater(object):
             count[id] = count.get(id, 0) + 1
         return count
 
+    """
     def get_list(self, lst):
         ids = list(set(lst))
         ids.sort()
@@ -120,7 +121,12 @@ class LinearFormater(object):
         for id in ids:
             count[id] = 1
         return count
-
+    """
+    def get_list(self, lst):
+        count = {}
+        for id, data in enumerate(lst):
+            count[id] = data
+        return count
 
 class WordLinear(LinearFormater):
     """

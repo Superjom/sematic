@@ -34,4 +34,7 @@ liblinear_train=${PROJECT_PATH}/tools/liblinear-1.93/train
 liblinear_predict=${PROJECT_PATH}/tools/liblinear-1.93/predict
 LDA=${PROJECT_PATH}/tools/lda
 
+# args
+LDA_NUM_TOPICS=10
+
 

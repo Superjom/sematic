@@ -16,7 +16,7 @@ def wid2list(path):
     with open(path) as f:
         for line in f.readlines():
             ls = map(strip, line.split())
-            ls = map(int, ls)
+            ls = map(float, ls)
             res.append(ls)
     return res
 
@@ -37,16 +37,16 @@ class CombinedModel(LinearFormater):
         labels = [1 for i in range(num_lines)]
         self.set_labels(labels)
 
-    def add_data_from_file(self, path, _max):
+    def add_data_from_file(self, path, _max, need_count=True):
         data = wid2list(path)
-        self.add_lst(data, _max)
+        self.add_lst(data, _max, need_count)
 
     def add_vector_from_file(self, path):
         with open(path) as f:
             c = f.read()
             ws = c.split()
             ws = map(strip, ws)
-            ws = map(int, ws)
+            ws = map(float, ws)
             self.add_vector(ws)
 
 if __name__ == '__main__':
