@@ -99,6 +99,27 @@ def args_check(num_args, usage_intro):
         sys.exit(-1)
     return argv[1:]
 
+class ArgsAction(object):
+    def __init__(self):
+        self.actiion = {}
+
+    def add_action(self, num_args, _type, action, info="", is_class=True):
+        self.action[_type] = (num_args, action, info, is_class)
+
+    def start(self):
+        _type = sys.argv[0]
+        if _type not in self.action:
+            print "Error: Unknown action"
+        else:
+            num_args, action, is_class, info = self.action[_type]
+            args = args_check(num_args+1, info)
+            if is_class:
+                c = action(*args[1:])
+                c()
+            else:
+                action(*args[1:])
+
+
 class Dic(object):
     def from_list(self, _list):
         self.dic = list(set(_list))
@@ -127,51 +148,6 @@ class Dic(object):
 strip = lambda x: x.strip()
 
 
-class Tfidf(object):
-    def __init__(self):
-        self.docs = []
-        self.dic = {}
-
-    def add_doc(self, wids):
-        doc_dic = {}
-        for wid in wids:
-            doc_dic[wid] = doc_dic.get(wid, 0.0) + 1.0
-            self.dic[wid] = self.dic.get(wid, 0.0) + 1.0
-        length = float(len(wids))
-        for k in doc_dic:
-            doc_dic[k] = doc_dic[k] / length
-        #self.docs.append(doc_dic)
-
-    def create_dic(self, wids):
-        doc_dic = {}
-        for wid in wids:
-            doc_dic[wid] = doc_dic.get(wid, 0.0) + 1.0
-            self.dic[wid] = self.dic.get(wid, 0.0) + 1.0
-        length = float(len(wids))
-        for k in doc_dic:
-            doc_dic[k] = doc_dic[k] / length
-        return doc_dic
-
-
-    def sim(self, title, source):
-        ts = map(strip, title.split())
-        ss = map(strip, source.split())
-        tdic = self.create_dic(ts)
-        sdic = self.create_dic(ss)
-        score = 0.0
-        for k in tdic:
-            if sdic.has_key(k):
-                score += (tdic[k] / self.dic[k]) + (sdic[k] / self.dic[k])
-        return score
-
-    def sim2(self, a1, a2):
-        dic1 = self.docs[a1]
-        dic2 = self.docs[a2]
-        score = 0.0
-        for k in dic1:
-            if dic2.has_key(k):
-                score += (dic1[k] / self.dic[k]) + (dic2[k] / self.dic[k])
-        return score
 
 if __name__ == "__main__":
     print sparse_value2list(2.5, 6, 0, 6)
