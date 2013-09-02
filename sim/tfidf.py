@@ -5,10 +5,10 @@ Created on Jul 9, 2013
 @author: Chunwei Yan @ pkusz
 @mail:  yanchunwei@outlook.com
 '''
+from __future__ import division
 import sys
 sys.path.append('..')
 from utils import *
-from numpy import *
 from math import *
 
 class TfIdf(object):
@@ -26,7 +26,7 @@ class TfIdf(object):
                 for ws in (qws, tws)]
         upper = sum([sco_dic_q[w] * sco_dic_t.get(w, 0.0) \
                     for w in sco_dic_q])
-        down = sum([sqrt(sum([dic[w]^2 for w in dic])) \
+        down = sum([sqrt(sum([dic[w]**2 for w in dic])) \
                     for dic in (sco_dic_q, sco_dic_t)])
         return upper/down
 
@@ -37,7 +37,7 @@ class TfIdf(object):
         return tf_dic
 
     def idf(self, w):
-        return log(self.dic[w] / self.num_docs)
+        return log( self.num_docs/self.dic[w] )
 
     def get_tf(self, ws):
         doc_dic = {}
@@ -46,6 +46,7 @@ class TfIdf(object):
             doc_dic[w] = doc_dic.get(w, 0) + 1
         for k in doc_dic:
             doc_dic[k] /= num_words
+        return doc_dic
 
     def gen_idf(self):
         """
@@ -79,7 +80,7 @@ class WordTfIdf(TfIdf):
     def tofile(self):
         with open(self.tph, 'w') as f:
             f.write(
-                ' '.join(self.sims))
+                ' '.join(map(str, self.sims)))
 
     def __call__(self):
         self.scan()
@@ -87,6 +88,6 @@ class WordTfIdf(TfIdf):
 
 if __name__ == '__main__':
     args = ArgsAction()
-    args.add_action(2, "word_tf_idf", "cmd fph, tph")
+    args.add_action(2, "word_tf_idf", WordTfIdf, "cmd fph, tph")
 
     args.start()

@@ -12,9 +12,12 @@ from utils import strip, args_check
 def gen2gram(ws):
     ws = map(strip, ws)
     two_grams = []
-    for i in range(len(ws)-1):
-        word_pair = "%s-%s" % (ws[i], ws[i+1])
-        two_grams.append(word_pair)
+    if len(ws) == 1:
+        two_grams = ws
+    else:
+        for i in range(len(ws)-1):
+            word_pair = "%s-%s" % (ws[i], ws[i+1])
+            two_grams.append(word_pair)
     return two_grams
 
 def parse(fpath, tpath):

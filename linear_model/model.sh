@@ -168,6 +168,17 @@ linear_model_word_and_token_1gram_2gram_and_editdis_word_char() {
 
 }
 
+com_main() {
+    predict_ph=${DATA_PATH}/com.predict
+    upload_ph=${DATA_PATH}/com.predict.upload
+    cmd="$PYPY gen_predict_res_format.py $predict_ph $TEST_DATA_PH $upload_ph"
+    cd ..
+    echo $cmd; $cmd
+    cd linear_model 
+    echo zip the result
+    zip -r ${upload_ph}.zip $upload_ph 
+}
+
 #one_gram_word_main
 #two_gram_word_main
 #one_gram_token_main
@@ -175,4 +186,5 @@ linear_model_word_and_token_1gram_2gram_and_editdis_word_char() {
 #linear_model_word_and_token_1gram_2gram_and_editdis_word_char init
 #linear_model_word_and_token_1gram_2gram_and_editdis_word_char train
 
-linear_model_word_and_token_1gram_2gram_and_editdis_word_char predict
+com_main
+#linear_model_word_and_token_1gram_2gram_and_editdis_word_char predict

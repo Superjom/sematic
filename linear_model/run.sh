@@ -64,3 +64,5 @@ trans_predict_res_format() {
 }
 
 #trans_predict_res_format
+#$PYPY gen_2gram_titles.py ${LABELED_DATA_PH}_titles_seg $LABEL_DATA_TITLES_2GRAM
+$PYPY gen_2gram_titles.py ${LABELED_DATA_PH}_titles_seg $TEST_DATA_TITLES_2GRAM

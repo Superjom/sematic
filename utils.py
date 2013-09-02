@@ -9,15 +9,28 @@ Created on Aug 21, 2013
 from __future__ import division
 import os
 import sys
-from math import floor
 
 
 pjoin = os.path.join
+
+def get_type(w):
+    if '/' in w:
+        pos = w.index('/')
+        return w[pos+1:]
+
+def get_word(w):
+    if '/' in w:
+        ws = w.split('/')
+        return ws[0]
+    else:
+        return w
+
 
 def get_num_lines(path):
     shell = os.popen('cat %s | wc -l' % path).read()
     num = int(shell) + 1
     return num
+
 
 def sparse_value2list(v, n, _min, _max):
     #print _min, _max, v
@@ -29,6 +42,7 @@ def sparse_value2list(v, n, _min, _max):
     _list = [0 for i in range(n)]
     _list[nn] = 1
     return _list
+
 
 class Memoize:
     def __init__(self, f):
@@ -92,26 +106,36 @@ fromjson = json.loads
 
 def args_check(num_args, usage_intro):
     argv = sys.argv
-    if len(argv[1:]) != num_args:
-        print "=" * 50
-        print "     usage: %s" % usage_intro
-        print "=" * 50
-        sys.exit(-1)
+    len_args = len(argv[1:])
+    if type(num_args) == type( []) :
+        if not len_args in num_args:
+            print "=" * 50
+            print "     usage: %s" % usage_intro
+            print "=" * 50
+            sys.exit(-1)
+    else:
+        if not len_args == num_args:
+            print "=" * 50
+            print "     usage: %s" % usage_intro
+            print "=" * 50
+            sys.exit(-1)
     return argv[1:]
+
 
 class ArgsAction(object):
     def __init__(self):
-        self.actiion = {}
+        self.action = {}
 
     def add_action(self, num_args, _type, action, info="", is_class=True):
         self.action[_type] = (num_args, action, info, is_class)
 
     def start(self):
-        _type = sys.argv[0]
+        _type = sys.argv[1]
+        print 'type:', _type
         if _type not in self.action:
             print "Error: Unknown action"
         else:
-            num_args, action, is_class, info = self.action[_type]
+            num_args, action, info, is_class = self.action[_type]
             args = args_check(num_args+1, info)
             if is_class:
                 c = action(*args[1:])
