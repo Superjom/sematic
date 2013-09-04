@@ -22,6 +22,7 @@ class Remover(object):
         self.lines = []
         with open(self.fpath) as f:
             for line in f.readlines():
+                line = line.strip()
                 q, t = line.split('\t')
                 q = self.rem(q)
                 t = self.rem(t)
@@ -63,9 +64,13 @@ class PuncRem(Remover):
 
     def rem(self, line):
         #print self.puncs
+        new_line = line
         for p in self.puncs:
-            line = line.replace(p, u' ')
-        return line
+            new_line = new_line.replace(p, u' ')
+        # for Bug: enpty string
+        if not new_line.strip():
+            return line
+        return new_line
 
 
 class SegTagRem(Remover):
@@ -166,17 +171,16 @@ class Ch2No(Remover):
 
 if __name__ == '__main__':
     fph, tph = args_check(2, "cmd fph tph")
+
     s = SegTagRem(fph, "")
     s.scan()
     lines = s.get_cmp()
     
     p = PuncRem("", "")
     p.lines_scan(lines)
+    #p = PuncRem(fph, "")
+    #p.scan()
     lines = p.lines
-
-    s = SegTagRem("", tph)
-    s.lines_scan(lines)
-    lines = s.lines
 
     a = Alpha2Large("" , tph)
     a.lines_scan(lines)

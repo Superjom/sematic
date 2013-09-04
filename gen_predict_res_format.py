@@ -35,7 +35,8 @@ class Gen(object):
                     #print i
                     res = resf.readline()
                     tes = testf.readline()
-                    label = self.formats.get(res.strip())
+                    label = res.strip()
+                    label = self.formats.get(label, int(label))
                     if label is None:
                         break
                     #print 'label:', label

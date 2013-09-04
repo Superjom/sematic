@@ -9,7 +9,7 @@ source "../env.sh"
 
 subseq_check() {
     for path in $LABEL_DATA_TITLES_2GRAM \
-        ${LABELED_DATA_PH}_cleaned_titles_seg\
+        ${LABELED_DATA_PH}_titles_seg\
         $TEST_DATA_TITLES_2GRAM\
         ${TEST_DATA_PH}_titles_seg; do
         cmd="$PYPY sim.py subseq $path ${path}.subseq.sim"
@@ -24,13 +24,25 @@ subseq_check() {
 }
 
 tfidf_sim() {
-    #$PYPY tfidf.py 
-    cmd="cat ${LABELED_DATA_PH}_titles_seg \
-        ${TRAIN_DATA_PH}_titles_seg \
-        ${TEST_DATA_PH}_titles_seg > $DATA_PATH/total_titles_seg"
-    #echo $cmd; $cmd;
+    type=$1
+    if [ $type = "init" ]; then
+        #$PYPY tfidf.py 
+        cmd="cat ${LABELED_DATA_PH}_titles_seg \
+            ${TRAIN_DATA_PH}_titles_seg \
+            ${TEST_DATA_PH}_titles_seg > $DATA_PATH/total_titles_seg"
+        echo $cmd; $cmd;
+    fi
 
-    $PYPY tfidf.py word_tf_idf $DATA_PATH/total_titles_seg $DATA_PATH/total_titles_seg.tfidf.sim
+    if [ $type = "train" ]; then
+        cmd="$PYPY tfidf.py word_tf_idf $DATA_PATH/total_titles_seg $DATA_PATH/total_titles_seg.tfidf.sim"
+        echo $cmd; $cmd;
+    fi
+
+    if [ $type = "trans_format" ]; then
+        # trans format
+        cmd="$PYPY tfidf.py trans_format $DATA_PATH/total_titles_seg.tfidf.sim $LABELED_DATA_PH $TRAIN_DATA_PH $TEST_DATA_PH"
+        echo $cmd; $cmd
+    fi
 }
 #subseq_check
 #tfidf_sim
@@ -77,4 +89,7 @@ train() {
 
 #subseq_check
 #trans_linear_format
-train
+#train
+
+#tfidf_sim train
+tfidf_sim trans_format

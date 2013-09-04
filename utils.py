@@ -28,7 +28,7 @@ def get_word(w):
 
 def get_num_lines(path):
     shell = os.popen('cat %s | wc -l' % path).read()
-    num = int(shell) + 1
+    num = int(shell)
     return num
 
 
@@ -130,8 +130,12 @@ class ArgsAction(object):
         self.action[_type] = (num_args, action, info, is_class)
 
     def start(self):
+        if len(sys.argv) == 1:
+            print 
+            print "Error: Unknown action"
+            print
+            sys.exit(-1)
         _type = sys.argv[1]
-        print 'type:', _type
         if _type not in self.action:
             print "Error: Unknown action"
         else:

@@ -26,14 +26,16 @@ class TfIdf(object):
                 for ws in (qws, tws)]
         upper = sum([sco_dic_q[w] * sco_dic_t.get(w, 0.0) \
                     for w in sco_dic_q])
-        down = sum([sqrt(sum([dic[w]**2 for w in dic])) \
-                    for dic in (sco_dic_q, sco_dic_t)])
+        down = sqrt(sum([sco_dic_q[w]**2 for w in sco_dic_q])) *\
+                sqrt(sum([sco_dic_t[w]**2 for w in sco_dic_t])) 
+        #print upper, down, upper/down
         return upper/down
 
     def get_score(self, ws):
         tf_dic = self.get_tf(ws)
         for k in tf_dic:
             tf_dic[k] *= self.idf(k)
+        #print tf_dic
         return tf_dic
 
     def idf(self, w):
@@ -41,11 +43,13 @@ class TfIdf(object):
 
     def get_tf(self, ws):
         doc_dic = {}
-        num_words = len(ws)
+        #num_words = len(ws)
         for w in ws:
             doc_dic[w] = doc_dic.get(w, 0) + 1
+        """
         for k in doc_dic:
             doc_dic[k] /= num_words
+        """
         return doc_dic
 
     def gen_idf(self):
@@ -61,6 +65,7 @@ class TfIdf(object):
                 tws = map(strip, title.split())
                 for w in set(qws + tws):
                     self.dic[w] = self.dic.get(w, 0) + 1
+
 
 class WordTfIdf(TfIdf):
     def __init__(self, ph, tph):
@@ -79,15 +84,38 @@ class WordTfIdf(TfIdf):
 
     def tofile(self):
         with open(self.tph, 'w') as f:
+            print "num of lines: ", len(self.sims)
             f.write(
-                ' '.join(map(str, self.sims)))
+                '\n'.join(map(str, self.sims)))
 
     def __call__(self):
         self.scan()
         self.tofile()
 
+def trans_format(ph, label_ph, train_ph, test_ph):
+    total_num_lines = get_num_lines(ph)
+    print total_num_lines
+    #assert total_num_lines == sum([label_ph, train_ph, test_ph])
+    with open(ph) as f:
+        for path in (label_ph, train_ph, test_ph):
+            sims = []
+            num_lines = get_num_lines(path)
+            print "num of lines of ", num_lines
+            for i in range(num_lines):
+                line = f.readline().strip()
+                #print line
+                sim = float(line)
+                sims.append(sim)
+            toph = path + ".tfidf"
+            with open(toph, 'w') as tf:
+                tf.write(
+                    '\n'.join( map(str, sims)))
+
+
+
 if __name__ == '__main__':
     args = ArgsAction()
     args.add_action(2, "word_tf_idf", WordTfIdf, "cmd fph, tph")
+    args.add_action(4, "trans_format", trans_format, "cmd ph, label_ph, train_ph, test_ph", is_class=False)
 
     args.start()

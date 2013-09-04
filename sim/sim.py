@@ -49,7 +49,12 @@ class SubSeq(object):
                 line = line.decode('utf8')
                 line = line.strip()
                 line = line.replace(' ', '')
-                query, title = line.split('\t')
+                print i
+                try:
+                    query, title = line.split('\t')
+                except:
+                    query = line
+                    title = "wrong wrong"
                 qs = map(alp2lower, list(query)) if as_char else query.split()
                 ts = map(alp2lower, list(title)) if as_char else title.split()
                 sim = self.sim(map(strip, qs), map(strip, ts))
@@ -102,14 +107,6 @@ def filter_sim_label(up_ph, sim_ph):
 
         with open(up_ph, 'w') as f:
             f.write('\n'.join(lines))
-
-def combine_model(a_ph, b_ph, t_ph):
-    '''
-    combine two result
-    '''
-    lines = []
-    with open(a_ph) as af:
-        with open(b_ph) as bf:
 
 
 if __name__ == '__main__':
