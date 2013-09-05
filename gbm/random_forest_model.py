@@ -11,6 +11,12 @@ sys.path.append('..')
 from utils import *
 from sklearn.ensemble import RandomForestClassifier as rfc
 
+LABEL_MAP = {
+    '-1': 0, 
+    '1': 1,
+    '0': 0,
+    }
+
 class DataSet(object):
     def __init__(self):
         self.data = []
@@ -25,16 +31,33 @@ class DataSet(object):
             for i, d in enumerate(_list):
                 self.data[i].append(d)
 
+    def add_list(self, _list):
+        if not self.data:
+            self.data = _list
+        else:
+            assert len(_list) == len(self.data), "%d != %d" % (len(_list), len(self.data))
+            for i, d in enumerate(_list):
+                self.data[i] += d
+
     def add_vector_from_file(self, ph):
         with open(ph) as f:
             c = f.read()
             datas = map(float, c.split())
             self.add_vector(datas)
 
+    def add_list_from_file(self, ph):
+        _list = []
+        with open(ph) as f:
+            for line in f.readlines():
+                ws = line.split()
+                ws = map(float, ws)
+                _list.append(ws)
+        self.add_list(_list)
+
     def set_labels(self, _list):
         self.labels = _list
 
-    def label_from_file(self, path, data_map=None):
+    def label_from_file(self, path, data_map=LABEL_MAP):
         """
         data_map: dic for label to data
         """
@@ -51,7 +74,7 @@ class RFModel(object):
     use random forest to classify the features
     """
     def __init__(self, train_dataset, predict_dataset, toph=None):
-        self.clf = rfc(n_estimators=300)
+        self.clf = rfc(n_estimators=1000)
         self.train_dataset = train_dataset
         self.predict_dataset = predict_dataset
         self.toph = toph
@@ -70,6 +93,7 @@ class RFModel(object):
             f.write(
                 '\n'.join(map(str, self.pred_labels)))
 
+# old API
 def train2file(*vec_phs):
     """
     args:
@@ -104,10 +128,55 @@ def train2file(*vec_phs):
 
 
 
-
 if __name__ == '__main__':
     # add subsentence sim, tfidf sim
+    """
     args = sys.argv[1:]
     print "args: ", args
     train2file(args)
+    """
+    from optparse import OptionParser
 
+    def foo_callback(option, opt, value, parser):
+        setattr(parser.values, option.dest, value.split(','))
+
+    parser = OptionParser()
+    parser.add_option('-L', '--labelph', dest='label_ph',
+            help='path of label file', metavar='FILE')
+    parser.add_option('-O', '--toph', dest='toph',
+            help='path of predict res', metavar='FILE')
+    parser.add_option('-v', '--vectorphs',
+                        type='string',
+                        help='list of vector paths',
+                        action='callback',
+                        callback=foo_callback)
+    parser.add_option('-l', '--listphs',
+                        type='string',
+                        help='list of list paths',
+                        action='callback',
+                        callback=foo_callback)
+    (options, args) = parser.parse_args()
+    print options
+    #help(args)
+
+    train_dataset = DataSet()
+    predict_dataset = DataSet()
+    train_dataset.label_from_file(options.label_ph)
+    if options.vectorphs:
+        for i,vp in enumerate(options.vectorphs):
+            if i%2 == 0:
+                train_dataset.add_vector_from_file(vp)
+            else:
+                predict_dataset.add_vector_from_file(vp)
+
+    if options.listphs:
+        for i,vp in enumerate(options.listphs):
+            if i%2 == 0:
+                train_dataset.add_list_from_file(vp)
+            else:
+                predict_dataset.add_list_from_file(vp)
+
+    model = RFModel(train_dataset, predict_dataset, options.toph)
+    model.train()
+    model.predict()
+    model.tofile()

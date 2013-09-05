@@ -7,3 +7,5 @@ Created on Jul 9, 2013
 '''
 from __future__ import division
 
+from random_forest_model import *
+

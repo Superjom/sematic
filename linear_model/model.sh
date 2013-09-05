@@ -36,6 +36,7 @@ linear_model_predict() {
     # predict
     echo predicting
     $liblinear_predict $test_linear_file $model_path $predict_ph
+    $liblinear_predict $train_linear_file $model_path ${train_linear_file}_predict
     # to upload format
     echo gen predict upload
     cd ..
@@ -180,7 +181,7 @@ com_main() {
 }
 
 #one_gram_word_main
-#two_gram_word_main
+two_gram_word_main
 #one_gram_token_main
 #two_gram_token_main
 #linear_model_word_and_token_1gram_2gram_and_editdis_word_char init
